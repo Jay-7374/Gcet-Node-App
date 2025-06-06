@@ -4,26 +4,21 @@ import orderModel from "../models/orderModel.js";
 const orderRouter = express.Router();
 
 orderRouter.post("/new", async (req, res) => {
-  try {
-    const { user, products, orderValue } = req.body;
-
-    if (!user || !products || !orderValue) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    const newOrder = new orderModel({
-      user,
-      products,
-      orderValue,
-      status: "pending",
-    });
-
-    const savedOrder = await newOrder.save();
-    return res.status(201).json(savedOrder);
-  } catch (error) {
-    console.error("Error creating order:", error);
-    return res.status(500).json({ message: "Server error" });
-  }
+  const { email, orderValue } = req.body;
+  const result = await orderModel.insertOne({ email, orderValue });
+  return res.json(result);
 });
 
-export default orderRouter;
+orderRouter.get("/:id", async (req, res) => {
+  const email = req.params.id;
+  const result = await orderModel.find({ email });
+  return res.json(result);
+});
+
+
+orderRouter.get("/all", async (req, res) => {
+  const result = await orderModel.find();
+  return res.json(result);
+});
+
+export default orderRouter
