@@ -1,8 +1,16 @@
-import mongoose from 'mongoose'
-const orderSchema = mongoose.Schema({
-  email: { type: String },
-  orderValue: { type: Number },
-});
-// const product = mongoose.model("Product", productSchema);
+import mongoose from 'mongoose';
 
-export default mongoose.model("Order", orderSchema);
+const orderSchema = mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  products: [
+    {
+      product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+      quantity: { type: Number, required: true, default: 1 },
+      price: { type: Number, required: true }
+    }
+  ],
+  orderValue: { type: Number, required: true },
+  status: { type: String, default: 'pending' }
+}, { timestamps: true });
+
+export default mongoose.model('Order', orderSchema);
