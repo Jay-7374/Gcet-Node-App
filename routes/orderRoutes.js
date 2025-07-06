@@ -3,22 +3,37 @@ import orderModel from "../models/orderModel.js";
 
 const orderRouter = express.Router();
 
+// Create a new order
 orderRouter.post("/new", async (req, res) => {
-  const { email, orderValue } = req.body;
-  const result = await orderModel.insertOne({ email, orderValue });
-  return res.json(result);
+  try {
+    // Expecting: { email, products: [{ name, quantity }], orderValue }
+    const { email, products, orderValue } = req.body;
+    const result = await orderModel.create({ email, products, orderValue });
+    return res.json(result);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 });
 
-orderRouter.get("/:id", async (req, res) => {
-  const email = req.params.id;
-  const result = await orderModel.find({ email });
-  return res.json(result);
+// Get all orders for a user by email
+orderRouter.get("/:email", async (req, res) => {
+  try {
+    const email = req.params.email;
+    const result = await orderModel.find({ email });
+    return res.json(result);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 });
 
-
+// Get all orders (admin or debug)
 orderRouter.get("/all", async (req, res) => {
-  const result = await orderModel.find();
-  return res.json(result);
+  try {
+    const result = await orderModel.find();
+    return res.json(result);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 });
 
-export default orderRouter
+export default orderRouter;
