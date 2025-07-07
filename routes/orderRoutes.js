@@ -17,12 +17,12 @@ orderRouter.post("/new", async (req, res) => {
 
 // Get all orders for a user by email
 orderRouter.get("/:email", async (req, res) => {
+  const { email } = req.params;
   try {
-    const email = req.params.email;
-    const result = await orderModel.find({ email });
-    return res.json(result);
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
+    const orders = await orderModel.find({ email }).sort({ orderDate: -1 });
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

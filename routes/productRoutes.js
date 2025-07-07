@@ -9,7 +9,8 @@ productRouter.get("/all", async (req, res) => {
 });
 
 productRouter.post("/new", async (req, res) => {
-  const product = req.body
+  const { img, name, price } = req.body;
+  const product = { img, name, price };
   const products = await productModel.create(product);
   res.json(products);
 });
